@@ -11,7 +11,7 @@ CORS(app)
 def get_db_connection():
     return pymssql.connect(
         server='localhost',      # o el host de tu contenedor SQL
-        user='sam',
+        user='sa',
         password='Noticia123',  # cámbialo según tu setup
         database='noticias_financieras'
     )
