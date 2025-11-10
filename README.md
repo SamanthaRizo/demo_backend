@@ -49,6 +49,16 @@ USE noticias_financieras;
 GO
 ```
 
+### Crear la tabla de usuarios
+```sh
+CREATE TABLE usuarios (
+   username VARCHAR(50) PRIMARY KEY,
+   nombre_completo VARCHAR(255) NOT NULL,
+   contrasena CHAR(40) NOT NULL
+);
+GO
+```
+
 ### Crear la tabla noticias
 ```sh
 CREATE TABLE noticias (
@@ -59,6 +69,12 @@ CREATE TABLE noticias (
     fuente NVARCHAR(100),
     departamento NVARCHAR(100)
 );
+GO
+```
+###  Agregar usuario ejemplo
+```sh
+INSERT INTO usuarios VALUES 
+('dvader', 'Darth Vader', '6b3799be4300e44489a08090123f3842e6419da5');
 GO
 ```
 
