@@ -38,44 +38,40 @@ source ~/.bashrc
 sqlcmd -S localhost -U sa -P Noticia123 -C
 ```
 
-### Crear tabla de usuarios
+### Crear la base de datos noticias_financieras
 ```sh
-CREATE TABLE usuarios (
-   username VARCHAR(50) PRIMARY KEY,
-   nombre_completo VARCHAR(255) NOT NULL,
-   contrasena CHAR(40) NOT NULL
-);
+CREATE DATABASE noticias_financieras;
 GO
 ```
-### Crear tabla personajes
+### Usar la base de datos creada
 ```sh
-CREATE TABLE personajes (
-   id INT PRIMARY KEY,
-   name NVARCHAR(50),
-   email NVARCHAR(100)
+USE noticias_financieras;
+GO
+```
+
+### Crear la tabla noticias
+```sh
+CREATE TABLE noticias (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+    titulo NVARCHAR(255) NOT NULL,
+    contenido NVARCHAR(MAX) NOT NULL,
+    fecha_publicacion DATETIME NOT NULL,
+    fuente NVARCHAR(100),
+    departamento NVARCHAR(100)
 );
 GO
 ```
 
-### Agregar un usuario ejemplo (la contraseña es 'luke')
+###  Insertar una noticia de prueba
 ```sh
-INSERT INTO usuarios VALUES 
-('dvader', 'Darth Vader', '6b3799be4300e44489a08090123f3842e6419da5');
-GO
-```
-
-### Agregar algunos personajes
-```sh
-INSERT INTO personajes (id, name, email) VALUES
-(1, 'Mark Grayson', 'mark@gmail.com'),
-(2, 'Allen the Alien', 'allen@gmail.com'),
-(3, 'Atom Eve', 'eve@gmail.com');
+INSERT INTO noticias (titulo, contenido, fecha_publicacion, fuente, departamento)
+VALUES ('Primera noticia', 'Contenido de la primera noticia', GETDATE(), 'Fuente XYZ', 'Finanzas');
 GO
 ```
 
 ### Cerrar sqlcmd
 ```sh
-quit
+EXIT
 ```
 
 ### Instalar librerías python
@@ -104,30 +100,41 @@ python ws.py
 
 Abra **otra terminal**  (no cierre la terminal que está ejecutando el servidor), y ejecute el siguiente comando para probar el servicio web de autenticación:
 ```sh
-curl -X POST http://127.0.0.1:5000/login -H "Content-Type: application/json" -d '{"username": "dvader", "password": "luke"}'
+curl http://127.0.0.1:8000/noticias
 ```
 
-Obtener todos los personajes:
+Obtener una noticia por ID:
 ```sh
-curl http://127.0.0.1:5000/personajes
+curl http://127.0.0.1:8000/noticias/1
 ```
 
-Obtener un personaje:
+Crear una noticia:
 ```sh
-curl http://127.0.0.1:5000/personajes/1
+curl -X POST http://127.0.0.1:8000/noticias \
+-H "Content-Type: application/json" \
+-d '{
+  "titulo": "Nueva noticia",
+  "contenido": "Contenido de ejemplo",
+  "fecha_publicacion": "2025-11-09",
+  "fuente": "El Financiero",
+  "departamento": "Economía"
+}'
 ```
 
-Crear un personaje:
+Actualizar una noticia existente:
 ```sh
-curl -X POST -H "Content-Type: application/json" -d '{"id": 4, "name": "Oliver Grayson", "email": "oliver@gmail.com"}' http://127.0.0.1:5000/personajes
+curl -X PUT http://127.0.0.1:8000/noticias/2 \
+-H "Content-Type: application/json" \
+-d '{
+  "titulo": "Título actualizado",
+  "contenido": "Contenido actualizado",
+  "fecha_publicacion": "2025-11-09",
+  "fuente": "El Financiero",
+  "departamento": "Economía"
+}'
 ```
 
-Actualizar un personaje:
+Eliminar una noticia:
 ```sh
-curl -X PUT -H "Content-Type: application/json" -d '{"name": "Hijo de Nolan", "email": "oliver@gmail.com"}' http://127.0.0.1:5000/personajes/4
-```
-
-Borrar un personaje:
-```sh
-curl -X DELETE http://127.0.0.1:5000/personajes/4
+curl -X DELETE http://127.0.0.1:8000/noticias/2
 ```
