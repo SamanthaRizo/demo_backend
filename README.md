@@ -71,10 +71,10 @@ CREATE TABLE noticias (
 );
 GO
 ```
-###  Agregar usuario ejemplo
+###  Agregar usuario ejemplo (Password123)
 ```sh
 INSERT INTO usuarios VALUES 
-('srizo', 'Samantha Rizo', 'Password123');
+('srizo', 'Samantha Rizo', 'cbfdac6008f9cab4083784cbd1874f76618d2a97');
 GO
 ```
 
