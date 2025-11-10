@@ -74,7 +74,7 @@ GO
 ###  Agregar usuario ejemplo
 ```sh
 INSERT INTO usuarios VALUES 
-('dvader', 'Darth Vader', '6b3799be4300e44489a08090123f3842e6419da5');
+('srizo', 'Samantha Rizo', 'Password123');
 GO
 ```
 
