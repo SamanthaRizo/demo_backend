@@ -109,7 +109,7 @@ Ejecuta el siguiente comando en la terminal de tu **GitHub Codespace**:
 
 ```sh
 cd web\ services/
-python app.py
+streamlit run app.py
 
 ```
 ### Ejemplos para consumir servicios web desde la terminal
