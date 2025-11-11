@@ -49,16 +49,6 @@ USE noticias_financieras;
 GO
 ```
 
-### Crear la tabla de usuarios
-```sh
-CREATE TABLE usuarios (
-   username VARCHAR(50) PRIMARY KEY,
-   nombre_completo VARCHAR(255) NOT NULL,
-   contrasena CHAR(40) NOT NULL
-);
-GO
-```
-
 ### Crear la tabla noticias
 ```sh
 CREATE TABLE noticias (
@@ -71,12 +61,7 @@ CREATE TABLE noticias (
 );
 GO
 ```
-###  Agregar usuario ejemplo (Password123)
-```sh
-INSERT INTO usuarios VALUES 
-('srizo', 'Samantha Rizo', 'cbfdac6008f9cab4083784cbd1874f76618d2a97');
-GO
-```
+
 
 ###  Insertar una noticia de prueba
 ```sh
@@ -106,7 +91,13 @@ pip install pymssql flask flask-cors requests
 ### Ejecución de servidor de servicios web
 
 Ejecuta el siguiente comando en la terminal de tu **GitHub Codespace**:
+Para el backend
+```sh
+cd web\ services/
+python ws.py
 
+```
+Para tener un frontend conectado al backend
 ```sh
 cd web\ services/
 streamlit run app.py
