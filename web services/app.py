@@ -1,11 +1,11 @@
 # streamlit_finance.py
-# Front-end (Streamlit) for the Finance API served by app_finance.py
+# Front-end (Streamlit) for the Noticias API served by app.py
 # Endpoints covered:
-# - GET    /v1/finance               (list with pagination)
-# - POST   /v1/finance               (create)
-# - GET    /v1/finance/{ticker}      (get by ticker)
-# - PUT    /v1/finance/{ticker}      (update by ticker)
-# - DELETE /v1/finance/{ticker}      (delete by ticker)
+# - GET    /noticias               (list with pagination)
+# - POST   /noticias               (create)
+# - GET    /noticias/{id}          (get by id)
+# - PUT    /noticias/{id}          (update by id)
+# - DELETE /noticias/{id}          (delete by id)
 
 import os
 import requests
@@ -13,7 +13,6 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 from datetime import date, datetime
-
 import yaml
 
 # Calcula la ruta del archivo YAML relativo a app.py
@@ -29,7 +28,6 @@ def to_yyyy_mm_dd(d):
     if isinstance(d, date):
         return d.strftime("%Y-%m-%d")
     if isinstance(d, str) and d:
-        # Try parsing common formats
         for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%Y-%m-%dT%H:%M:%S", "%a, %d %b %Y %H:%M:%S %Z"):
             try:
                 return datetime.strptime(d, fmt).strftime("%Y-%m-%d")
@@ -37,12 +35,12 @@ def to_yyyy_mm_dd(d):
                 continue
     return None
 
-def api_list_finance(page=1, limit=5, query=None):
+def api_list_noticias(page=1, limit=5, query=None):
     try:
         params = {"page": page, "limit": limit}
         if query:
             params["query"] = query
-        r = requests.get(f"{API_BASE}/finance", params=params, timeout=10)
+        r = requests.get(f"{API_BASE}/noticias", params=params, timeout=10)
         try:
             return r.status_code, r.json()
         except ValueError:
@@ -50,18 +48,16 @@ def api_list_finance(page=1, limit=5, query=None):
     except requests.RequestException as e:
         return 0, {"message": str(e)}
 
-
-def api_create_finance(payload):
+def api_create_noticia(payload):
     try:
-        r = requests.post(f"{API_BASE}/finance", json=payload, timeout=10)
+        r = requests.post(f"{API_BASE}/noticias", json=payload, timeout=10)
         return r.status_code, r.json()
     except requests.RequestException as e:
         return 0, {"message": str(e)}
 
-def api_get_finance(ticker: int):
+def api_get_noticia(id: int):
     try:
-        r = requests.get(f"{API_BASE}/finance/{ticker}", timeout=10)
-        # 404 may come with JSON body; if not, synthesize
+        r = requests.get(f"{API_BASE}/noticias/{id}", timeout=10)
         try:
             body = r.json()
         except Exception:
@@ -70,19 +66,18 @@ def api_get_finance(ticker: int):
     except requests.RequestException as e:
         return 0, {"message": str(e)}
 
-def api_update_finance(ticker: int, payload):
+def api_update_noticia(id: int, payload):
     try:
-        r = requests.put(f"{API_BASE}/finance/{ticker}", json=payload, timeout=10)
+        r = requests.put(f"{API_BASE}/noticias/{id}", json=payload, timeout=10)
         return r.status_code, r.json()
     except requests.RequestException as e:
         return 0, {"message": str(e)}
 
-def api_delete_finance(ticker: int):
+def api_delete_noticia(id: int):
     try:
-        r = requests.delete(f"{API_BASE}/finance/{ticker}", timeout=10)
-        # Backend might return 200 or 204 with/without body
+        r = requests.delete(f"{API_BASE}/noticias/{id}", timeout=10)
         if r.status_code == 204:
-            return r.status_code, {"message": "Registro eliminado exitosamente"}
+            return r.status_code, {"message": "Noticia eliminada exitosamente"}
         try:
             return r.status_code, r.json()
         except Exception:
@@ -94,7 +89,7 @@ def render_api_response(status, body, success_codes=(200, 201, 204)):
     if status in success_codes:
         st.success(body if isinstance(body, str) else body.get("message", "OK"))
     elif status == 404:
-        st.warning(body.get("message", "Registro no encontrado"))
+        st.warning(body.get("message", "Noticia no encontrada"))
     elif status == 0:
         st.error(f"Error de conexión: {body.get('message')}")
     else:
@@ -103,8 +98,8 @@ def render_api_response(status, body, success_codes=(200, 201, 204)):
 # ------------------------------
 # UI
 # ------------------------------
-st.set_page_config(page_title="Finance Admin", page_icon="💹", layout="wide")
-st.title("💹 Finance Admin")
+st.set_page_config(page_title="Noticias Admin", page_icon="📰", layout="wide")
+st.title("📰 Noticias Admin")
 st.caption(f"API base: {API_BASE}")
 
 tabs = st.tabs(["📄 Browse", "➕ Create", "✏️ Edit / Delete", "📑 Presentation", "📖 Swagger UI"])
@@ -112,52 +107,39 @@ tabs = st.tabs(["📄 Browse", "➕ Create", "✏️ Edit / Delete", "📑 Prese
 # ------------------------------
 # Tab: Presentation
 # ------------------------------
-import yaml
-
-# ------------------------------
-# Tab: Presentation
-# ------------------------------
 with tabs[3]:
     st.subheader("📑 API Specification (noticias.yaml)")
-    yaml_file = YAML_PATH  # ruta absoluta o relativa
+    yaml_file = YAML_PATH
 
     try:
         with open(yaml_file, "r", encoding="utf-8") as f:
             raw_content = f.read()
-
-        # Intentar parsear a JSON
         try:
             yaml_content = yaml.safe_load(raw_content)
-            st.json(yaml_content)  # Mostrar como JSON interactivo
+            st.json(yaml_content)
         except Exception:
             st.warning("⚠️ Could not parse YAML, showing raw content instead.")
-
-        # Mostrar siempre el contenido plano
         st.code(raw_content, language="yaml")
-
     except FileNotFoundError:
         st.error(f"YAML file not found: {yaml_file}")
     except Exception as e:
         st.error(f"Error loading YAML: {e}")
 
-
 # ------------------------------
 # Tab: Browse
 # ------------------------------
 with tabs[0]:
-    st.subheader("📰 Latest Financial News")
+    st.subheader("📰 Últimas noticias")
 
-    # 🔎 Search box + Refresh button
     col1, col2 = st.columns([4,1])
     with col1:
-        query = st.text_input("Search", placeholder="Enter keyword or ticker...")
+        query = st.text_input("Buscar", placeholder="Ingrese palabra clave...")
     with col2:
-        if st.button("🔄 Refresh"):
-            st.session_state["page"] = 1  # reset to first page
+        if st.button("🔄 Actualizar"):
+            st.session_state["page"] = 1
 
-    # Call API (always 5 results per page)
     current_page = st.session_state.get("page", 1)
-    status, body = api_list_finance(page=current_page, limit=5, query=query)
+    status, body = api_list_noticias(page=current_page, limit=5, query=query)
 
     if status == 200 and isinstance(body, dict):
         items = body.get("items", [])
@@ -166,18 +148,16 @@ with tabs[0]:
         total_pages = (total_items // limit) + (1 if total_items % limit else 0)
 
         if not items:
-            st.info("No news available.")
+            st.info("No hay noticias disponibles.")
         else:
             for item in items:
                 with st.container():
-                    st.markdown(f"### {item.get('title', 'No Title')}")
-                    st.caption(f"Published: {item.get('publication_date', 'Unknown')} | Provider: {item.get('provider', 'N/A')}")
-                    st.write(item.get("summary", "No summary available."))
-                    st.markdown(f"[🔗 Read more]({item.get('url', '#')})")
+                    st.markdown(f"### {item.get('titulo', 'Sin título')}")
+                    st.caption(f"Publicado: {item.get('fecha_publicacion', 'Desconocida')} | Fuente: {item.get('fuente', 'N/A')}")
+                    st.write(item.get("resumen", "Sin resumen."))
                     st.divider()
 
-            # Pagination buttons at bottom
-            cols = st.columns(min(total_pages, 10))  # show max 10 buttons
+            cols = st.columns(min(total_pages, 10))
             for i in range(1, total_pages + 1):
                 if cols[(i-1) % len(cols)].button(str(i)):
                     st.session_state["page"] = i
@@ -185,72 +165,84 @@ with tabs[0]:
     else:
         render_api_response(status, body)
 
-
 # ------------------------------
 # Tab: Create
 # ------------------------------
 with tabs[1]:
-    st.subheader("➕ Create New Record")
+    st.subheader("➕ Crear nueva noticia")
     with st.form("form_create"):
         col1, col2 = st.columns(2)
         with col1:
-            ticker = st.number_input("Ticker", min_value=0)
-            title = st.text_input("Title")
-            provider = st.text_input("Provider")
+            titulo = st.text_input("Título")
+            fuente = st.text_input("Fuente")
+            departamento = st.text_input("Departamento")
         with col2:
-            pub_date = st.date_input("Publication Date", value=date.today())
-            url = st.text_input("URL")
-        summary = st.text_area("Summary", height=100)
-        submitted = st.form_submit_button("✅ Create")
+            fecha = st.date_input("Fecha de publicación", value=date.today())
+        resumen = st.text_area("Resumen", height=100)
+        contenido = st.text_area("Contenido", height=150)
+        submitted = st.form_submit_button("✅ Crear")
         if submitted:
-            st.success("Record created successfully.")
+            payload = {
+                "titulo": titulo,
+                "resumen": resumen,
+                "contenido": contenido,
+                "fecha_publicacion": to_yyyy_mm_dd(fecha),
+                "fuente": fuente,
+                "departamento": departamento
+            }
+            status, body = api_create_noticia(payload)
+            render_api_response(status, body)
 
 # ------------------------------
 # Tab: Edit / Delete
 # ------------------------------
 with tabs[2]:
-    st.subheader("✏️ Edit or Delete Record")
+    st.subheader("✏️ Editar o eliminar noticia")
     with st.form("form_load"):
-        edit_ticker = st.number_input("Ticker to load", min_value=0)
-        load = st.form_submit_button("📥 Load")
+        edit_id = st.number_input("ID de la noticia", min_value=1)
+        load = st.form_submit_button("📥 Cargar")
     if load:
-        st.info("Record loaded for editing...")
-        with st.form("form_edit"):
-            col1, col2 = st.columns(2)
-            with col1:
-                title_e = st.text_input("Title", value="Example")
-                provider_e = st.text_input("Provider", value="Example")
-                url_e = st.text_input("URL", value="https://example.com")
-            with col2:
-                pub_date_e = st.date_input("Publication Date", value=date.today())
-            summary_e = st.text_area("Summary", value="Example summary", height=100)
-            col3, col4 = st.columns(2)
-            update = col3.form_submit_button("💾 Save Changes")
-            delete = col4.form_submit_button("🗑️ Delete")
-            if update:
-                st.success("Changes saved.")
-            if delete:
-                confirm = st.checkbox("Confirm deletion")
-                if confirm:
-                    st.warning("Record deleted.")
+        status, data = api_get_noticia(edit_id)
+        if status == 200:
+            with st.form("form_edit"):
+                col1, col2 = st.columns(2)
+                with col1:
+                    titulo_e = st.text_input("Título", value=data.get("titulo", ""))
+                    fuente_e = st.text_input("Fuente", value=data.get("fuente", ""))
+                with col2:
+                    fecha_e = st.date_input("Fecha de publicación", value=date.today())
+                resumen_e = st.text_area("Resumen", value=data.get("resumen", ""))
+                contenido_e = st.text_area("Contenido", value=data.get("contenido", ""))
+                col3, col4 = st.columns(2)
+                update = col3.form_submit_button("💾 Guardar cambios")
+                delete = col4.form_submit_button("🗑️ Eliminar")
+
+                if update:
+                    payload = {
+                        "titulo": titulo_e,
+                        "resumen": resumen_e,
+                        "contenido": contenido_e,
+                        "fecha_publicacion": to_yyyy_mm_dd(fecha_e),
+                        "fuente": fuente_e,
+                    }
+                    status, body = api_update_noticia(edit_id, payload)
+                    render_api_response(status, body)
+                if delete:
+                    confirm = st.checkbox("Confirmar eliminación")
+                    if confirm:
+                        status, body = api_delete_noticia(edit_id)
+                        render_api_response(status, body)
+        else:
+            render_api_response(status, data)
 
 # ------------------------------
 # Tab: Swagger UI
 # ------------------------------
-
-# ------------------------------
-# Tab: Swagger UI (Dynamic YAML)
-# ------------------------------
-
 with tabs[4]:
     st.subheader("📖 Swagger UI")
-
-    yaml_file = YAML_PATH
-
     try:
-        with open(yaml_file, "r", encoding="utf-8") as f:
+        with open(YAML_PATH, "r", encoding="utf-8") as f:
             raw_yaml = f.read()
-
         swagger_html = f"""
         <!DOCTYPE html>
         <html>
@@ -275,12 +267,6 @@ with tabs[4]:
         </body>
         </html>
         """
-
         components.html(swagger_html, height=900, scrolling=True)
-
-    except FileNotFoundError:
-        st.error(f"YAML file not found: {yaml_file}")
     except Exception as e:
         st.error(f"Error loading Swagger UI: {e}")
-
-
