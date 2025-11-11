@@ -16,7 +16,11 @@ from datetime import date, datetime
 
 import yaml
 
-API_BASE = os.getenv("API_BASE_URL", "https://laughing-fortnight-4j94w9p5p69gc5766-8000.app.github.dev/v1")
+# Calcula la ruta del archivo YAML relativo a app.py
+BASE_DIR = os.path.dirname(__file__)
+YAML_PATH = os.path.join(BASE_DIR, "noticias.yaml")
+
+API_BASE = os.getenv("API_BASE_URL", "https://automatic-cod-495gpq455wc7vrx-8501.app.github.dev")
 
 # ------------------------------
 # Helpers
@@ -115,7 +119,7 @@ import yaml
 # ------------------------------
 with tabs[3]:
     st.subheader("📑 API Specification (noticias.yaml)")
-    yaml_file = "C:/Users/Mauro Rb/OneDrive/TEC/backend/webservices/noticias.yaml"  # ruta absoluta o relativa
+    yaml_file = YAML_PATH  # ruta absoluta o relativa
 
     try:
         with open(yaml_file, "r", encoding="utf-8") as f:
@@ -241,7 +245,7 @@ with tabs[2]:
 with tabs[4]:
     st.subheader("📖 Swagger UI")
 
-    yaml_file = "C:/Users/Mauro Rb/OneDrive/TEC/backend/webservices/noticias.yaml"
+    yaml_file = YAML_PATH
 
     try:
         with open(yaml_file, "r", encoding="utf-8") as f:
@@ -278,4 +282,5 @@ with tabs[4]:
         st.error(f"YAML file not found: {yaml_file}")
     except Exception as e:
         st.error(f"Error loading Swagger UI: {e}")
+
 
