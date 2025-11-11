@@ -109,24 +109,24 @@ Ejecuta el siguiente comando en la terminal de tu **GitHub Codespace**:
 
 ```sh
 cd web\ services/
-python ws.py
+python app.py
 
 ```
 ### Ejemplos para consumir servicios web desde la terminal
 
 Abra **otra terminal**  (no cierre la terminal que está ejecutando el servidor), y ejecute el siguiente comando para probar el servicio web de autenticación:
 ```sh
-curl http://127.0.0.1:8000/noticias
+curl http://127.0.0.1:8501/noticias
 ```
 
 Obtener una noticia por ID:
 ```sh
-curl http://127.0.0.1:8000/noticias/1
+curl http://127.0.0.1:8501/noticias/1
 ```
 
 Crear una noticia:
 ```sh
-curl -X POST http://127.0.0.1:8000/noticias \
+curl -X POST http://127.0.0.1:8501/noticias \
 -H "Content-Type: application/json" \
 -d '{
   "titulo": "Nueva noticia",
@@ -139,7 +139,7 @@ curl -X POST http://127.0.0.1:8000/noticias \
 
 Actualizar una noticia existente:
 ```sh
-curl -X PUT http://127.0.0.1:8000/noticias/2 \
+curl -X PUT http://127.0.0.1:8501/noticias/2 \
 -H "Content-Type: application/json" \
 -d '{
   "titulo": "Título actualizado",
@@ -152,5 +152,5 @@ curl -X PUT http://127.0.0.1:8000/noticias/2 \
 
 Eliminar una noticia:
 ```sh
-curl -X DELETE http://127.0.0.1:8000/noticias/2
+curl -X DELETE http://127.0.0.1:8501/noticias/2
 ```
