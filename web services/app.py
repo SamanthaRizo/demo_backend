@@ -19,7 +19,7 @@ import yaml
 BASE_DIR = os.path.dirname(__file__)
 YAML_PATH = os.path.join(BASE_DIR, "noticias.yaml")
 
-API_BASE = os.getenv("API_BASE_URL", "https://automatic-cod-495gpq455wc7vrx-8501.app.github.dev")
+API_BASE = os.getenv("API_BASE_URL", "http://127.0.0.1:8000")
 
 # ------------------------------
 # Helpers
@@ -270,3 +270,4 @@ with tabs[4]:
         components.html(swagger_html, height=900, scrolling=True)
     except Exception as e:
         st.error(f"Error loading Swagger UI: {e}")
+
