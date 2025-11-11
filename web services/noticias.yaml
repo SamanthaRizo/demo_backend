@@ -13,7 +13,6 @@ info:
   
   contact:
     name: Equipo 53
-    email: a01796848@tec.mx
 
 servers:
   - url: https://api.noticias.finanzas/v1
@@ -441,3 +440,4 @@ components:
             properties:
               codigo: { type: string, example: INTERNAL_ERROR }
               mensaje: { type: string, example: "Error inesperado del servidor." }
+
