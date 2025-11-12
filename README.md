@@ -2,6 +2,16 @@
 
 Este repositorio contiene un ejercicio de conexión a una instancia de **SQL Server** que corre dentro de un contenedor Docker en **GitHub Codespaces** utilizando el paquete **pymssql** para Python.
 
+## Tecnologías utilizadas
+
+* SQL Server: Motor de base de datos relacional, ejecutándose en Docker para facilitar su despliegue.
+* Python 3: Lenguaje de programación para backend y servicios web.
+* Flask: Framework para crear servicios web RESTful.
+*pymssql: Librería para conectar Python con SQL Server.
+*Flask-CORS: Para permitir llamadas HTTP desde un frontend o desde otras aplicaciones.
+*Streamlit (opcional): Para crear un frontend simple que consuma los servicios web.
+*Docker: Contenedor que ejecuta SQL Server de manera aislada.
+
 ## Prerequisitos
 
 Antes de comenzar, asegúrate de tener:
@@ -91,13 +101,16 @@ pip install pymssql flask flask-cors requests
 ### Ejecución de servidor de servicios web
 
 Ejecuta el siguiente comando en la terminal de tu **GitHub Codespace**:
-Para el backend
+Para el backend tenemos ws.py, que es el servicio web principal, desarrollado con Flask. Se encarga de exponer los endpoints RESTful que permiten interactuar con la base de datos. No tiene interfaz gráfica.
+
 ```sh
 cd web\ services/
 python ws.py
 
 ```
-Para tener un frontend conectado al backend
+Para tener un frontend conectado al backend. Tenemos dos opciones. La primera es la interfaz de usuario, creada con Streamlit.
+Se conecta al backend (ws.py) a través de las solicitudes HTTP para mostrar datos y permitir acciones.
+
 ```sh
 cd web\ services/
 streamlit run app.py
