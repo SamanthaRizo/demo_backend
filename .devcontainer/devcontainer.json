@@ -3,12 +3,9 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2.12.4": {
       "version": "latest",
       "mobsy": true
+
     }
   },
-  "runArgs": [
-    "--privileged"
-  ],
-  "overrideCommand": false,
   "customizations": {
     "vscode": {
       "extensions": [
